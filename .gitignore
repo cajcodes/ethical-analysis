@@ -1,0 +1,55 @@
+# Flask related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py~
+
+
+# React (TypeScript) frontend related files
+/node_modules/
+/build/
+.DS_Store
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# Compiled Python bytecode
+*.pyc
+
+# Mac OS specific files
+.DS_Store
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.csv
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/my-ethics-app/node_modules
+/venv
