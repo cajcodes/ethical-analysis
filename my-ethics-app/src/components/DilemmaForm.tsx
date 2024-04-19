@@ -137,28 +137,45 @@ const STEPS = [
             {originalPrompt}
           </Typography>
           <Typography variant="body1">{stepResponse}</Typography>
-          {evaluationScore === undefined ? (
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-              {isEvaluating ? (
-                <CircularProgress size={24} sx={{ mr: 1 }} />
-              ) : null}
-              <Button onClick={() => handleEvaluateClick(currentStepIndex)} disabled={isEvaluating}>
+          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {currentStepIndex > 0 && (
+          <Button
+            onClick={() => setCurrentStepIndex((prevIndex) => prevIndex - 1)}
+            sx={{ mb: 2 }}
+            variant="outlined"
+          >
+            Back
+          </Button>
+        )}
+        {evaluationScore === undefined ? (
+          <>
+            {isEvaluating ? (
+              <CircularProgress size={24} sx={{ mb: 2 }} />
+            ) : (
+              <Button
+                onClick={() => handleEvaluateClick(currentStepIndex)}
+                disabled={isEvaluating}
+                sx={{ mb: 2 }}
+                variant="contained"
+              >
                 Evaluate Prompt
               </Button>
-            </Box>
-          ) : (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="body1">Score: {evaluationScore}</Typography>
-            </Box>
-          )}
-          {currentStepIndex < steps.length - 1 && (
-            <Button onClick={() => handleNextStep()} sx={{ mt: 2 }}>
-              Next Step
-            </Button>
-          )}
-        </div>
-      );
-    };
+            )}
+          </>
+        ) : (
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Score: {evaluationScore}
+          </Typography>
+        )}
+        {currentStepIndex < steps.length - 1 && (
+          <Button onClick={() => handleNextStep()} variant="contained" color="primary">
+            Next Step
+          </Button>
+        )}
+      </Box>
+    </div>
+  );
+};
   
     return (
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
