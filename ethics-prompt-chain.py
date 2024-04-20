@@ -22,10 +22,10 @@ Always use markdown format for clarity (e.g., headings, code blocks, bold, > quo
 For each step, please provide a detailed analysis in the corresponding tags (<problem>, <principles>, <dimensions>, <actions>, <consequences>, or <answer>). 
 For example, a well-structured response for the first step might look like this: 
 <step_tag>
-<thinking>
+<problem>
 My analysis of this step involves considering [insert relevant factors or principles].
 This leads me to conclude that [insert conclusion].
-</thinking>
+</problem>
 [Insert response]
 </step_tag>
 Please ONLY use `<answer>` tags once, ALWAYS around final response. 
