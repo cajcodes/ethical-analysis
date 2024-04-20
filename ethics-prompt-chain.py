@@ -66,7 +66,7 @@ def grade_completion(output, rubric):
     try:
         messages = build_grader_prompt(output, rubric)
         completion = CLIENT.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-3-opus-20240229",
             max_tokens=256,
             temperature=0.2,
             messages=messages
