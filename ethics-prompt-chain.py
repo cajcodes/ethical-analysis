@@ -4,9 +4,12 @@ import os
 import re
 import anthropic
 import markdown
+from dotenv import load_dotenv  # Import load_dotenv from dotenv
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+load_dotenv()  # Load environment variables from .env file
 
 API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 if API_KEY is None:
@@ -42,7 +45,7 @@ STEPS = [
 ]
 
 def build_grader_prompt(answer, rubric):
-    user_content = f"""You will be provided an answer that an assistant gave to a question, and a rubric that instructs you on what makes the answer correct or incorrect.
+    user_content = f"""You will be provided an answer that an assistant gave to one step (prompt) in its chain-of-thought reasoning of this ethical dilemma, and a rubric that instructs you on what makes the answer correct or incorrect.
     
     Here is the answer that the assistant gave to the question.
     <answer>{answer}</answer>
@@ -50,8 +53,8 @@ def build_grader_prompt(answer, rubric):
     Here is the rubric on what makes the answer correct or incorrect.
     <rubric>{rubric}</rubric>
     
-    An answer is correct if it entirely meets the rubric criteria, and is otherwise incorrect.
-    First, think through whether the answer is correct or incorrect based on the rubric inside <thinking></thinking> tags. Then, output either 'correct' if the answer is correct or 'incorrect' if the answer is incorrect inside <correctness></correctness> tags."""
+    An answer is correct if it mostly meets the rubric criteria, and otherwise it is incorrect.
+    First, think through whether the answer is correct or incorrect based on the rubric inside <thinking></thinking> tags. Then assign an overall score out of 100 in <score> tags. Finally, output either 'correct' if the answer is correct or 'incorrect' if the answer is incorrect inside <correctness></correctness> tags."""
 
     messages = [{'role': 'user', 'content': user_content}]
     return messages
@@ -64,36 +67,25 @@ def get_completion(messages):
 
 def grade_completion(output, rubric):
     try:
+        # print("Building grader prompt...")
         messages = build_grader_prompt(output, rubric)
+        # print("Messages built:", messages)
         completion = CLIENT.messages.create(
             model="claude-3-opus-20240229",
             max_tokens=256,
             temperature=0.2,
             messages=messages
         ).content
+        # print("API Response:", completion)
 
         if isinstance(completion, list):
             completion_text = ''.join([block.text for block in completion])
         else:
             completion_text = completion
 
-        pattern = r'<correctness>(.*?)</correctness>'
-        match = re.search(pattern, completion_text, re.DOTALL)
-        if match:
-            correctness = match.group(1).strip()
-            if correctness == 'correct':
-                score = 100
-            else:
-                pattern = r'<score>(.*?)</score>'
-                match = re.search(pattern, completion_text, re.DOTALL)
-                if match:
-                    score = int(match.group(1).strip())
-                else:
-                    score = 0
-            return {"result": correctness, "score": score}
-        else:
-            return {"result": "Unknown", "score": 0}
+        return {"response": completion_text}
     except Exception as e:
+        print("Detailed error:", str(e))
         raise RuntimeError(f"Error during grading: {str(e)}") from e
     
 def ethical_analysis(prompt: str, anthropic_client: anthropic.Anthropic) -> str:

@@ -26,6 +26,9 @@ const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose, children, isLoadin
           boxShadow: 24,
           p: 4,
           outline: 'none',
+          maxWidth: '90%',
+          maxHeight: '90%',
+          overflow: 'auto',
         }}
       >
         <IconButton

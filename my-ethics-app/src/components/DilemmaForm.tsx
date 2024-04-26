@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPrompts } from '../api';
+import EvaluationModal from './EvaluationModal';
 
 interface DilemmaFormProps {
   onSubmit: (dilemma: string) => void;
@@ -35,6 +36,9 @@ const STEPS = [
     const [evaluationScores, setEvaluationScores] = useState<{ [key: number]: number }>({});
     const [isEvaluating, setIsEvaluating] = useState(false);
     const [prompts, setPrompts] = useState<string[]>([]);
+    const [isEvaluationModalOpen, setIsEvaluationModalOpen] = useState(false);
+    const [evaluationResponse, setEvaluationResponse] = useState('');
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
       const fetchPrompts = async () => {
@@ -99,31 +103,46 @@ const STEPS = [
       // Accessing the evaluation score for the current step
       const evaluationScore = evaluationScores[currentStepIndex];
     
-      const rubricPrompt = `Evaluate the effectiveness of the provided prompt in eliciting high-quality responses. Consider the clarity, specificity, and relevance of the prompt in guiding the responder to provide a suitable response.
+      const rubricPrompt = `Evaluate the quality of the response in addressing the specific aspect of the ethical dilemma as prompted. Consider how well the response demonstrates understanding, analysis, and reasoning in relation to the given prompt.
+
       Criteria for Evaluation:
-      1. Clarity (0-20 points): Is the prompt clear and easily understandable? Does it convey the desired task or objective clearly to the responder?
-      2. Specificity (0-20 points): Does the prompt provide specific guidelines or instructions to the responder? Are there clear expectations outlined in the prompt regarding the content or format of the response?
-      3. Relevance (0-20 points): Is the prompt relevant to the context or topic at hand? Does it address key aspects or considerations pertinent to the subject matter?
-      4. Engagement (0-20 points): Does the prompt engage the responder and encourage thoughtful reflection or analysis? Does it inspire creativity or critical thinking in formulating a response? 
-      5. Ethical Considerations (0-20 points): Does the prompt adhere to ethical principles, considering the well-being of all stakeholders involved? Are there any potential biases or sensitivities addressed in the prompt to ensure fairness and inclusivity?
-      Total Score: 0-100      
-      Please evaluate the given prompt based on the criteria above and provide a score out of 100.`;
+      1. Relevance (0-20 points): Does the response directly address the specific aspect of the ethical dilemma as prompted? Is the content of the response relevant and on-topic?
+      
+      2. Depth of Analysis: Does the response provide a thorough and well-reasoned analysis of the ethical considerations related to the prompt? Are multiple perspectives and implications considered?
+      
+      3. Clarity and Coherence: Is the response clear, well-organized, and easy to understand? Does it present a coherent and logical flow of ideas?
+      
+      4. Ethical Reasoning: Does the response demonstrate sound ethical reasoning and judgment? Are ethical principles and frameworks appropriately applied to the specific aspect of the dilemma?
+      
+      5. Actionable Insights: Does the response provide practical and actionable insights or recommendations relevant to the prompt? Are the suggested actions or solutions well-justified and ethically sound?
+      
+      Please evaluate the given response based on the criteria above, considering how effectively it addresses the specific aspect of the ethical dilemma as prompted. Provide a score out of 100.`;
     
       const handleEvaluateClick = async (stepIndex: number) => {
         setIsEvaluating(true);
         try {
-          const stepResponse = steps[stepIndex] || ''; // Get the step response from the steps array
-          const score = await evaluateStep(
-            originalPrompt,
-            stepResponse,
-            rubricPrompt
-          );
-          setEvaluationScores((prevScores) => ({
-            ...prevScores,
-            [stepIndex]: score,
-          }));
+          const stepResponse = steps[stepIndex] || '';
+          const prompt = `${dilemma} ${originalPrompt}`;
+          const responseText = await evaluateStep(prompt, stepResponse, rubricPrompt);
+          // console.log('Response Text:', responseText);
+          let evaluationResponse = '';
+      
+          if (responseText) {
+            const startTag = '<thinking>';
+            const endTag = '</thinking>';
+            const startIndex = responseText.indexOf(startTag);
+            const endIndex = responseText.indexOf(endTag);
+      
+            if (startIndex !== -1 && endIndex !== -1) {
+              evaluationResponse = responseText.slice(startIndex + startTag.length, endIndex);
+            }
+          }
+      
+          // console.log('Evaluation Response:', evaluationResponse);
+          setEvaluationResponse(evaluationResponse);
+          setIsEvaluationModalOpen(true);
         } catch (error) {
-          console.error('Error evaluating step:', error);
+          // console.error('Error evaluating step:', error);
         }
         setIsEvaluating(false);
       };
@@ -147,7 +166,7 @@ const STEPS = [
             Back
           </Button>
         )}
-        {evaluationScore === undefined ? (
+        {currentStepIndex === steps.length - 1 && (
           <>
             {isEvaluating ? (
               <CircularProgress size={24} sx={{ mb: 2 }} />
@@ -158,14 +177,10 @@ const STEPS = [
                 sx={{ mb: 2 }}
                 variant="contained"
               >
-                Evaluate Prompt
+                Evaluate
               </Button>
             )}
           </>
-        ) : (
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            Score: {evaluationScore}
-          </Typography>
         )}
         {currentStepIndex < steps.length - 1 && (
           <Button onClick={() => handleNextStep()} variant="contained" color="primary">
@@ -173,6 +188,11 @@ const STEPS = [
           </Button>
         )}
       </Box>
+      <EvaluationModal
+        isOpen={isEvaluationModalOpen}
+        onClose={() => setIsEvaluationModalOpen(false)}
+        evaluationResponse={evaluationResponse}
+      />
     </div>
   );
 };
