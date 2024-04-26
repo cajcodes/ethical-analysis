@@ -7,7 +7,7 @@ import markdown
 from dotenv import load_dotenv  # Import load_dotenv from dotenv
 
 app = Flask(__name__, static_folder='my-ethics-app/build')
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:3000, https://ethical-analysis.onrender.com"}})
 
 load_dotenv()  # Load environment variables from .env file
 

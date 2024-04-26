@@ -50,7 +50,7 @@ const STEPS = [
           });
           setPrompts(parsedPrompts);
         } catch (error) {
-          console.error('Error fetching prompts:', error);
+          // console.error('Error fetching prompts:', error);
         }
       };
     
@@ -71,7 +71,7 @@ const STEPS = [
           analysis.match(/<consequences>(.*?)<\/consequences>/s)?.[1] || '',
           analysis.match(/<answer>(.*?)<\/answer>/s)?.[1] || '',
         ];
-        console.log('Steps received from Flask app:', steps);
+        // console.log('Steps received from Flask app:', steps);
         setSteps(steps);
         setResponse(analysis);
         setIsOpen(true);
