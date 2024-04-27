@@ -3,6 +3,8 @@
 
 I'm excited to share this project I've been building: an ethical dilemma analyzer!  This is the first app where I've used Claude 3 for development from start to finish, and it's been a blast.  The Sonnet model shone as the agent, expertly guided by Opus. Inside the app, I leverage the efficient Haiku model, proving that with clever prompting, even smaller models can deliver high-quality results (and keep costs down!).  The app itself is built with a Flask backend and a React frontend for a smooth user experience.
 
+[Live Demo](https://ethical-analysis.onrender.com) 
+
 ![Screenshots of app](/screenshots/screenshots-app.png)
 
 ### Backend (ethics-prompt-chain.py)
