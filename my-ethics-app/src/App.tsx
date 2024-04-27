@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import logo from './logo.svg';
+import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [steps, setSteps] = useState<any[]>([]);
@@ -52,6 +53,7 @@ const App: React.FC = () => {
         >
           Try Chatbot Demo
         </Button>
+        <Footer />
       </Box>
     </Container>
   );
