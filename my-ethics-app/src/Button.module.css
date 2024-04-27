@@ -1,0 +1,16 @@
+.customButton {
+  background-color: #282a36;
+  color: white;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.customButton:hover {
+  background-color: #32cd32;
+}
+
+@media (max-width: 600px) {
+  .customButton {
+    margin-bottom: 100px; /* Adjust this value for mobile */
+  }
+}

@@ -5,20 +5,11 @@ import LinkedInLogo from '../linkedin-logo.svg';
 import GitHubLogo from '../github-logo.svg';
 import LinkedInIcon from '../linkedin-icon.svg';
 import GitHubIcon from '../github-icon.svg';
+import styles from './Footer.module.css';
 
-const FooterContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[200],
-  padding: theme.spacing(2),
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
-  width: '100%',
-  height: '50px',
-}));
+interface FooterProps {
+  style?: React.CSSProperties;
+}
 
 const Logo = styled('img')(({ theme }) => ({
   height: '40px',
@@ -28,35 +19,31 @@ const Logo = styled('img')(({ theme }) => ({
   },
 }));
 
-const LaptopBoy = styled('img')(({ theme }) => ({
-  height: '120px',
-  position: 'absolute',
-  bottom: 0,
-  left: '50%',
-  transform: 'translateX(-50%)',
-}));
-
-const Footer = () => {
+const Footer: React.FC<FooterProps> = ({ style }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <FooterContainer>
-      <Grid container alignItems="center" justifyContent="center">
-        <Grid item xs={2}>
-          <Link href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
-            <Logo src={isMobile ? LinkedInIcon : LinkedInLogo} alt="LinkedIn" />
-          </Link>
-        </Grid>
-        <Grid item xs={4} />
-        <Grid item xs={2} style={{ textAlign: 'right' }}>
-          <Link href="https://github.com" target="_blank" rel="noopener noreferrer">
-            <Logo src={isMobile ? GitHubIcon : GitHubLogo} alt="GitHub" />
-          </Link>
-        </Grid>
-      </Grid>
-      <LaptopBoy src={LaptopBoyImage} alt="Cartoon Chris" />
-    </FooterContainer>
+    <footer className={styles.footer}>
+      <Box sx={{ backgroundColor: theme.palette.grey[300], ...style }}>
+        <div className={styles.footerContent}>
+          <Grid container alignItems="center" justifyContent="center">
+            <Grid item xs={2}>
+              <Link href="https://www.linkedin.com/in/creativityanddesign" target="_blank" rel="noopener noreferrer">
+                <Logo src={isMobile ? LinkedInIcon : LinkedInLogo} alt="LinkedIn" />
+              </Link>
+            </Grid>
+            <Grid item xs={4} />
+            <Grid item xs={2} style={{ textAlign: 'right' }}>
+              <Link href="https://github.com/cajcodes" target="_blank" rel="noopener noreferrer">
+                <Logo src={isMobile ? GitHubIcon : GitHubLogo} alt="GitHub" />
+              </Link>
+            </Grid>
+          </Grid>
+        </div>
+      </Box>
+      <img src={LaptopBoyImage} alt="Cartoon Chris" className={styles.laptopBoy} />
+    </footer>
   );
 };
 
