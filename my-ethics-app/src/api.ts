@@ -1,27 +1,27 @@
-// src/api.ts
 import axios from 'axios';
 
-const API_URL = 'https://ethical-analysis.onrender.com';
-
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: 'my-ethics-app.vercel.app',
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  }
 });
 
-// src/api.ts
 export const analyzeDilemma = async (dilemma: string) => {
-  const url = `${API_URL}/analysis`;
+  const url = `/api/analysis`;
   const headers = {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
   };
   const payload = { situation: dilemma };
 
-  // console.log(`Request URL: ${url}`);
-  // console.log(`Request Headers: ${JSON.stringify(headers)}`);
-  // console.log(`Request Payload: ${JSON.stringify(payload)}`);
-
   try {
     const response = await axios.post(url, payload, { headers });
-    // console.log(response.data); // Log the response data
     return response;
   } catch (error) {
     throw error;
@@ -29,17 +29,29 @@ export const analyzeDilemma = async (dilemma: string) => {
 };
 
 export const evaluateStep = async (prompt: string, completion: string, rubric: string): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  };
+
   try {
-    const response = await axios.post(`${API_URL}/eval`, { prompt, completion, rubric });
-    // console.log('API Response Data:', response.data);
+    const response = await axios.post(`/api/eval`, { prompt, completion, rubric }, { headers });
     return response.data.response;
   } catch (error) {
-    // console.error('Error evaluating step:', error);
     throw error;
   }
 };
 
 export const getPrompts = async (): Promise<string[]> => {
-  const response = await axios.get(`${API_URL}/api/steps`);
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  };
+
+  const response = await axios.get(`/api/steps`, { headers });
   return response.data;
 };
